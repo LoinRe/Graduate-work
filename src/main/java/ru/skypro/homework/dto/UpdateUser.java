@@ -4,13 +4,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "Запрос на регистрацию")
-public class Register {
-
-    private String username;
-    private String password;
+@Schema(description = "Обновление профиля пользователя")
+public class UpdateUser {
     private String firstName;
     private String lastName;
     private String phone;
-    private Role role; // USER | ADMIN
 }
+
