@@ -8,27 +8,31 @@ import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.*;
 
 import java.util.Collections;
+import ru.skypro.homework.service.CommentService;
 
 @Tag(name = "Комментарии")
 @RestController
 @RequestMapping("/ads/{adId}/comments")
 @RequiredArgsConstructor
 public class CommentsController {
+    private final CommentService commentService;
 
     @Operation(summary = "Комментарии объявления")
     @GetMapping
     public Comments getComments(@PathVariable Integer adId) {
         Comments c = new Comments();
-        c.setCount(0);
-        c.setResults(Collections.emptyList());
+        var all = commentService.getComments(adId);
+        c.setCount(all.size());
+        c.setResults(all);
         return c;
     }
 
     @Operation(summary = "Добавить комментарий")
     @PostMapping
     public Comment addComment(@PathVariable Integer adId,
-                              @RequestBody CreateOrUpdateComment dto) {
-        return new Comment();
+                              @RequestBody CreateOrUpdateComment dto,
+                              org.springframework.security.core.Authentication auth) {
+        return commentService.addComment(adId, dto, auth);
     }
 
     @Operation(summary = "Удалить комментарий")

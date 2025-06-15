@@ -6,5 +6,5 @@ import ru.skypro.homework.models.CommentEntity;
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<CommentEntity, Integer> {
-    List<CommentEntity> findByAd_Id(Integer adId);
+    List<CommentEntity> findAllByAdId(Integer adId);
 }
