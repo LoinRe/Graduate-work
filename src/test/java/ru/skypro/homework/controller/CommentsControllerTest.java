@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CommentsController.class)
-@AutoConfigureMockMvc(addFilters = false) // потом убрать!
+@AutoConfigureMockMvc(addFilters = false)
 class CommentsControllerTest {
 
     @Autowired

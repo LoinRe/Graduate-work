@@ -7,7 +7,7 @@ import lombok.Data;
 @Schema(name = "User", description = "Пользователь")
 public class User {
     private Integer id;
-    private String email;
+    private String username;
     private String firstName;
     private String lastName;
     private String phone;

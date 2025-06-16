@@ -7,6 +7,7 @@ import lombok.Data;
 @Schema(description = "Запрос на регистрацию")
 public class Register {
 
+    private String email;
     private String username;
     private String password;
     private String firstName;

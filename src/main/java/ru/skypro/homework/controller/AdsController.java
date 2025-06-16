@@ -4,9 +4,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.skypro.homework.dto.*;
+import ru.skypro.homework.service.AdService;
 
 import java.util.Collections;
 
@@ -16,21 +22,32 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class AdsController {
 
+    private final AdService adService;
+
+
     @Operation(summary = "Все объявления")
     @GetMapping
     public Ads getAllAds() {
         Ads ads = new Ads();
-        ads.setCount(0);
-        ads.setResults(Collections.emptyList());
+        var all = adService.getAllAds();
+        ads.setCount(all.size());
+        ads.setResults(all);
         return ads;
     }
 
     @Operation(summary = "Добавить объявление")
-    @PostMapping(consumes = "multipart/form-data")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Ad addAd(@RequestPart("properties") CreateOrUpdateAd props,
-                    @RequestPart("image") MultipartFile image) {
-        return new Ad();
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Ad> addAd(@RequestPart("properties") String propertiesString,
+                                    @RequestPart("image") MultipartFile image,
+                                    org.springframework.security.core.Authentication authentication) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            CreateOrUpdateAd properties = objectMapper.readValue(propertiesString, CreateOrUpdateAd.class);
+            Ad ad = adService.createAd(properties, image, authentication);
+            return ResponseEntity.status(HttpStatus.CREATED).body(ad);
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @Operation(summary = "Получить объявление")
@@ -54,17 +71,31 @@ public class AdsController {
 
     @Operation(summary = "Мои объявления")
     @GetMapping("/me")
-    public Ads getMyAds() {
+    public Ads getMyAds(Authentication auth) {
         Ads ads = new Ads();
-        ads.setCount(0);
-        ads.setResults(Collections.emptyList());
+        var all = adService.getAdsByUser(auth.getName());
+        ads.setCount(all.size());
+        ads.setResults(all);
         return ads;
     }
 
     @Operation(summary = "Обновить картинку объявления")
     @PatchMapping(value = "/{id}/image", consumes = "multipart/form-data")
-    public byte[] updateImage(@PathVariable Integer id,
+    public ResponseEntity<String> updateImage(@PathVariable Integer id,
                               @RequestPart("image") MultipartFile image) {
-        return new byte[0];
+        try {
+            String filename = System.currentTimeMillis() + "_" + image.getOriginalFilename();
+            java.nio.file.Path mediaDir = java.nio.file.Paths.get("media");
+            if (!java.nio.file.Files.exists(mediaDir)) {
+                java.nio.file.Files.createDirectories(mediaDir);
+            }
+            java.nio.file.Path filePath = mediaDir.resolve(filename);
+            image.transferTo(filePath);
+            // Обновить ссылку на картинку в объявлении
+            adService.updateImage(id, "/media/" + filename);
+            return ResponseEntity.ok("/media/" + filename);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Ошибка при загрузке изображения: " + e.getMessage());
+        }
     }
 }
