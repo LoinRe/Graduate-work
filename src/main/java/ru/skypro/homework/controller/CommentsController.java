@@ -12,16 +12,16 @@ import ru.skypro.homework.service.CommentService;
 
 @Tag(name = "Комментарии")
 @RestController
-@RequestMapping("/ads/{adId}/comments")
+@RequestMapping("/ads/{id}/comments")
 @RequiredArgsConstructor
 public class CommentsController {
     private final CommentService commentService;
 
     @Operation(summary = "Комментарии объявления")
     @GetMapping
-    public Comments getComments(@PathVariable Integer adId) {
+    public Comments getComments(@PathVariable("id") Integer id) {
         Comments c = new Comments();
-        var all = commentService.getComments(adId);
+        var all = commentService.getComments(id);
         c.setCount(all.size());
         c.setResults(all);
         return c;
@@ -29,24 +29,28 @@ public class CommentsController {
 
     @Operation(summary = "Добавить комментарий")
     @PostMapping
-    public Comment addComment(@PathVariable Integer adId,
+    public Comment addComment(@PathVariable("id") Integer id,
                               @RequestBody CreateOrUpdateComment dto,
                               org.springframework.security.core.Authentication auth) {
-        return commentService.addComment(adId, dto, auth);
+        return commentService.addComment(id, dto, auth);
     }
 
     @Operation(summary = "Удалить комментарий")
     @DeleteMapping("/{commentId}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteComment(@PathVariable Integer adId,
-                              @PathVariable Integer commentId) {
+    public void deleteComment(@PathVariable("id") Integer id,
+                              @PathVariable Integer commentId,
+                              org.springframework.security.core.Authentication auth) {
+        commentService.deleteComment(commentId, auth);
     }
 
     @Operation(summary = "Обновить комментарий")
     @PatchMapping("/{commentId}")
-    public Comment updateComment(@PathVariable Integer adId,
+    public Comment updateComment(@PathVariable("id") Integer id,
                                  @PathVariable Integer commentId,
-                                 @RequestBody CreateOrUpdateComment dto) {
-        return new Comment();
+                                 @RequestBody CreateOrUpdateComment dto,
+                                 org.springframework.security.core.Authentication auth) {
+        return commentService.updateComment(commentId, dto, auth);
     }
 }
+

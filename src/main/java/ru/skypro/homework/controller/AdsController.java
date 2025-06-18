@@ -59,14 +59,17 @@ public class AdsController {
     @Operation(summary = "Удалить объявление")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeAd(@PathVariable Integer id) {
+    public void removeAd(@PathVariable Integer id,
+                         Authentication auth) {
+        adService.deleteAd(id, auth);
     }
 
     @Operation(summary = "Обновить объявление")
     @PatchMapping("/{id}")
     public Ad updateAd(@PathVariable Integer id,
-                       @RequestBody CreateOrUpdateAd dto) {
-        return new Ad();
+                       @RequestBody CreateOrUpdateAd dto,
+                       Authentication auth) {
+        return adService.updateAd(id, dto, auth);
     }
 
     @Operation(summary = "Мои объявления")

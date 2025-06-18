@@ -11,6 +11,6 @@ import java.util.List;
 public interface CommentService {
     List<Comment> getComments(Integer adId);
     Comment addComment(Integer adId, CreateOrUpdateComment dto, Authentication auth);
-    Comment updateComment(Integer commentId, Comment dto, Authentication auth);
+    Comment updateComment(Integer commentId, CreateOrUpdateComment dto, Authentication auth);
     void deleteComment(Integer commentId, Authentication auth);
 }

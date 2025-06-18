@@ -60,14 +60,23 @@ public class AdServiceImpl implements AdService {
     @Override
     public Ad createAd(CreateOrUpdateAd dto, MultipartFile image, Authentication auth) {
         UserEntity user = userRepository.findByUsername(auth.getName())
-                .orElseThrow(); // Здесь можно добавить кастомную ошибку
+                .orElseThrow();
 
         AdEntity entity = adMapper.toEntity(dto, user);
         // Пример: сохраняем файл и путь к нему
         if (image != null && !image.isEmpty()) {
-            String filename = image.getOriginalFilename();
-            // TODO: Реализуйте сохранение файла на диск/в облако и получите путь
-            entity.setImage(filename);
+            try {
+                String filename = System.currentTimeMillis() + "_" + image.getOriginalFilename();
+                java.nio.file.Path mediaDir = java.nio.file.Paths.get("media");
+                if (!java.nio.file.Files.exists(mediaDir)) {
+                    java.nio.file.Files.createDirectories(mediaDir);
+                }
+                java.nio.file.Path filePath = mediaDir.resolve(filename);
+                image.transferTo(filePath);
+                entity.setImage("/media/" + filename);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to store ad image", e);
+            }
         }
         AdEntity saved = adRepository.save(entity);
         return adMapper.toDto(saved);

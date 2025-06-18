@@ -44,7 +44,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment updateComment(Integer commentId, Comment dto, Authentication auth) {
+    public Comment updateComment(Integer commentId, CreateOrUpdateComment dto, Authentication auth) {
         CommentEntity comment = commentRepository.findById(commentId).orElseThrow();
         if (!auth.getName().equals(comment.getAuthor().getUsername()) &&
                 !auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
