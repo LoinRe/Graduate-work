@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-create-schema
+      author: LoinRe
+      changes:
+        - sqlFile:
+            path: scripts/01-create-schema.sql
+            relativeToChangelogFile: true
+
