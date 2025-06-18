@@ -54,7 +54,20 @@ public class UserServiceImpl implements UserService {
     public void updateUserImage(String username, MultipartFile image) {
         UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        // TODO: реализовать сохранение изображения
+        if (image != null && !image.isEmpty()) {
+            try {
+                String filename = System.currentTimeMillis() + "_" + image.getOriginalFilename();
+                java.nio.file.Path mediaDir = java.nio.file.Paths.get("media");
+                if (!java.nio.file.Files.exists(mediaDir)) {
+                    java.nio.file.Files.createDirectories(mediaDir);
+                }
+                java.nio.file.Path filePath = mediaDir.resolve(filename);
+                image.transferTo(filePath);
+                user.setImage("/media/" + filename);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to store image", e);
+            }
+        }
         userRepository.save(user);
     }
 }

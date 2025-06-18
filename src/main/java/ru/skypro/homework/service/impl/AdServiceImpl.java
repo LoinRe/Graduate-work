@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Ad;
+import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.models.AdEntity;
@@ -42,6 +43,12 @@ public class AdServiceImpl implements AdService {
     private final AdRepository adRepository;
     private final AdMapper adMapper;
     private final UserRepository userRepository;
+
+    @Override
+    public ExtendedAd getAd(Integer id) {
+        AdEntity ad = adRepository.findById(id).orElseThrow(() -> new RuntimeException("Ad not found"));
+        return adMapper.toExtendedDto(ad);
+    }
 
     @Override
     public List<Ad> getAllAds() {

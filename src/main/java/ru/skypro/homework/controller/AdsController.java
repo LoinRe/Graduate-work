@@ -53,7 +53,7 @@ public class AdsController {
     @Operation(summary = "Получить объявление")
     @GetMapping("/{id}")
     public ExtendedAd getAd(@PathVariable Integer id) {
-        return new ExtendedAd();
+        return adService.getAd(id);
     }
 
     @Operation(summary = "Удалить объявление")
