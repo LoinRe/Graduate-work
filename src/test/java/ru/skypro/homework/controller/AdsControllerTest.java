@@ -39,7 +39,7 @@ class AdsControllerTest {
         ads.setCount(0);
         ads.setResults(Collections.emptyList());
         when(adService.getAllAds()).thenReturn(Collections.emptyList());
-        when(adService.createAd(any(), any())).thenReturn(new Ad());
+        when(adService.createAd(any(CreateOrUpdateAd.class), any(), any())).thenReturn(new Ad());
     }
 
     @Test

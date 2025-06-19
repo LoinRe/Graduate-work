@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Ad;
+import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.models.AdEntity;
@@ -32,6 +33,7 @@ public class AdServiceImpl implements AdService {
         List<AdEntity> ads = adRepository.findAllByAuthor(user);
         return ads.stream().map(adMapper::toDto).collect(java.util.stream.Collectors.toList());
     }
+
     @Override
     public void updateImage(Integer adId, String imagePath) {
         AdEntity ad = adRepository.findById(adId).orElseThrow(() -> new RuntimeException("Ad not found"));
@@ -44,6 +46,12 @@ public class AdServiceImpl implements AdService {
     private final UserRepository userRepository;
 
     @Override
+    public ExtendedAd getAd(Integer id) {
+        AdEntity ad = adRepository.findById(id).orElseThrow(() -> new RuntimeException("Ad not found"));
+        return adMapper.toExtendedDto(ad);
+    }
+
+    @Override
     public List<Ad> getAllAds() {
         return adRepository.findAll().stream()
                 .map(adMapper::toDto)
@@ -53,14 +61,23 @@ public class AdServiceImpl implements AdService {
     @Override
     public Ad createAd(CreateOrUpdateAd dto, MultipartFile image, Authentication auth) {
         UserEntity user = userRepository.findByUsername(auth.getName())
-                .orElseThrow(); // Здесь можно добавить кастомную ошибку
+                .orElseThrow();
 
         AdEntity entity = adMapper.toEntity(dto, user);
         // Пример: сохраняем файл и путь к нему
         if (image != null && !image.isEmpty()) {
-            String filename = image.getOriginalFilename();
-            // TODO: Реализуйте сохранение файла на диск/в облако и получите путь
-            entity.setImage(filename);
+            try {
+                String filename = System.currentTimeMillis() + "_" + image.getOriginalFilename();
+                java.nio.file.Path mediaDir = java.nio.file.Paths.get("media");
+                if (!java.nio.file.Files.exists(mediaDir)) {
+                    java.nio.file.Files.createDirectories(mediaDir);
+                }
+                java.nio.file.Path filePath = mediaDir.resolve(filename);
+                image.transferTo(filePath);
+                entity.setImage("/media/" + filename);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to store ad image", e);
+            }
         }
         AdEntity saved = adRepository.save(entity);
         return adMapper.toDto(saved);

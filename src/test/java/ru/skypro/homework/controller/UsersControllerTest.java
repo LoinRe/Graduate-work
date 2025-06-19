@@ -47,7 +47,7 @@ class UsersControllerTest {
 
         testUser = new User();
         testUser.setId(1);
-        testUser.setEmail("user@gmail.com");
+        testUser.setUsername("user");
         testUser.setFirstName("John");
         testUser.setLastName("Doe");
         testUser.setPhone("+7 999 111-22-33");
@@ -110,7 +110,10 @@ class UsersControllerTest {
                         MediaType.IMAGE_PNG_VALUE, "bytes".getBytes());
 
         mvc.perform(multipart("/users/me/image").file(img)
-                        .with(req -> { req.setMethod("PATCH"); return req; })
+                        .with(req -> {
+                            req.setMethod("PATCH");
+                            return req;
+                        })
                         .principal(authentication))
                 .andExpect(status().isOk());
     }

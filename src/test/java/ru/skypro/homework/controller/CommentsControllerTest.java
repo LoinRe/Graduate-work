@@ -1,8 +1,14 @@
 package ru.skypro.homework.controller;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
+
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -14,6 +20,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(CommentsController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class CommentsControllerTest {
+
+    @MockBean
+    private ru.skypro.homework.service.CommentService commentService;
+
+    @BeforeEach
+    void setUp() {
+        when(commentService.getComments(anyInt())).thenReturn(java.util.Collections.emptyList());
+        when(commentService.addComment(anyInt(), any(), any())).thenReturn(new ru.skypro.homework.dto.Comment());
+    }
 
     @Autowired
     private MockMvc mvc;
