@@ -25,6 +25,11 @@ public class AdsController {
     private final AdService adService;
 
 
+    /**
+     * Возвращает все объявления системы.
+     *
+     * @return объект {@link Ads} с количеством и списком объявлений
+     */
     @Operation(summary = "Все объявления")
     @GetMapping
     public Ads getAllAds() {
@@ -35,6 +40,14 @@ public class AdsController {
         return ads;
     }
 
+    /**
+     * Создаёт новое объявление вместе с изображением.
+     *
+     * @param propertiesString JSON-строка с полями объявления (title, price, description)
+     * @param image            изображение объявления
+     * @param authentication   текущий пользователь (автор)
+     * @return созданное объявление в response body либо 400 при ошибке парсинга
+     */
     @Operation(summary = "Добавить объявление")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Ad> addAd(@RequestPart("properties") String propertiesString,
@@ -50,12 +63,24 @@ public class AdsController {
         }
     }
 
+    /**
+     * Возвращает расширенную информацию об объявлении.
+     *
+     * @param id идентификатор объявления
+     * @return {@link ru.skypro.homework.dto.ExtendedAd}
+     */
     @Operation(summary = "Получить объявление")
     @GetMapping("/{id}")
     public ExtendedAd getAd(@PathVariable Integer id) {
         return adService.getAd(id);
     }
 
+    /**
+     * Удаляет объявление (доступно автору или ADMIN).
+     *
+     * @param id   идентификатор объявления
+     * @param auth текущий пользователь
+     */
     @Operation(summary = "Удалить объявление")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -64,6 +89,14 @@ public class AdsController {
         adService.deleteAd(id, auth);
     }
 
+    /**
+     * Частично обновляет поля объявления.
+     *
+     * @param id   идентификатор объявления
+     * @param dto  новые значения полей
+     * @param auth текущий пользователь
+     * @return обновлённое объявление
+     */
     @Operation(summary = "Обновить объявление")
     @PatchMapping("/{id}")
     public Ad updateAd(@PathVariable Integer id,
@@ -72,6 +105,12 @@ public class AdsController {
         return adService.updateAd(id, dto, auth);
     }
 
+    /**
+     * Возвращает объявления, созданные текущим пользователем.
+     *
+     * @param auth текущий пользователь
+     * @return объект {@link Ads} с объявлениями пользователя
+     */
     @Operation(summary = "Мои объявления")
     @GetMapping("/me")
     public Ads getMyAds(Authentication auth) {
@@ -82,10 +121,17 @@ public class AdsController {
         return ads;
     }
 
+    /**
+     * Обновляет изображение объявления.
+     *
+     * @param id    идентификатор объявления
+     * @param image новое изображение
+     * @return относительный URL загруженной картинки либо сообщение об ошибке
+     */
     @Operation(summary = "Обновить картинку объявления")
     @PatchMapping(value = "/{id}/image", consumes = "multipart/form-data")
     public ResponseEntity<String> updateImage(@PathVariable Integer id,
-                              @RequestPart("image") MultipartFile image) {
+                                              @RequestPart("image") MultipartFile image) {
         try {
             String filename = System.currentTimeMillis() + "_" + image.getOriginalFilename();
             java.nio.file.Path mediaDir = java.nio.file.Paths.get("media");

@@ -60,6 +60,15 @@ java -jar target/graduate-work-0.0.1-SNAPSHOT.jar
 Swagger UI: `http://localhost:8080/swagger-ui.html`  
 JSON-описание: `http://localhost:8080/v3/api-docs`
 
+## Запуск фронтенда (Docker)
+Для тестирования бэкенд вместе с пользовательским интерфейсом, запустите готовый Docker-образ React-приложения:
+
+```bash
+docker run -p 3000:3000 --rm ghcr.io/dmitry-bizin/front-react-avito:v1.21
+```
+
+Фронтенд будет доступен по адресу http://localhost:3000 и уже настроен на работу с бэкендом на порту 8080.
+
 ## Тестирование
 Запуск всех тестов:
 ```bash

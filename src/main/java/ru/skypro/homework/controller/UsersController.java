@@ -21,18 +21,37 @@ public class UsersController {
     private final UserService userService;
     private final UserMapper userMapper;
 
+    /**
+     * Возвращает профиль текущего пользователя.
+     *
+     * @param auth аутентификация Spring Security
+     * @return DTO пользователя
+     */
     @Operation(summary = "Получить текущего пользователя")
     @GetMapping("/me")
     public User getUser(Authentication auth) {
         return userService.getUser(auth.getName());
     }
 
+    /**
+     * Обновляет профиль текущего пользователя.
+     *
+     * @param dto  новые данные профиля
+     * @param auth текущий пользователь
+     * @return обновлённый DTO
+     */
     @Operation(summary = "Обновить профиль")
     @PatchMapping("/me")
     public UpdateUser updateUser(@RequestBody UpdateUser dto, Authentication auth) {
         return userService.updateUser(auth.getName(), dto);
     }
 
+    /**
+     * Загружает новую аватарку пользователя.
+     *
+     * @param image файл изображения
+     * @param auth  текущий пользователь
+     */
     @Operation(summary = "Обновить аватар")
     @PatchMapping("/me/image")
     @ResponseStatus(HttpStatus.OK)
@@ -41,6 +60,13 @@ public class UsersController {
     }
 
     @PostMapping("/set_password")
+    /**
+     * Изменяет пароль пользователя после проверки текущего.
+     *
+     * @param password объект с текущим и новым паролем
+     * @param auth     текущий пользователь
+     * @return 200 OK при успехе или 401 при неверном текущем пароле
+     */
     @Operation(summary = "Смена пароля пользователя")
     public ResponseEntity<Void> setPassword(@RequestBody NewPassword password, Authentication auth) {
         if (userService.changePassword(auth.getName(), password.getCurrentPassword(), password.getNewPassword())) {

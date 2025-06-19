@@ -8,6 +8,7 @@ import ru.skypro.homework.dto.Register;
 public interface AuthService {
     /**
      * Проверяет учётные данные пользователя и устанавливает сессию.
+     *
      * @param userName имя пользователя (логин)
      * @param password пароль в открытом виде
      * @return true, если учётные данные верны
@@ -16,6 +17,7 @@ public interface AuthService {
 
     /**
      * Регистрирует нового пользователя.
+     *
      * @param register данные для регистрации
      * @return true, если регистрация успешна
      */

@@ -33,6 +33,7 @@ public class AdServiceImpl implements AdService {
         List<AdEntity> ads = adRepository.findAllByAuthor(user);
         return ads.stream().map(adMapper::toDto).collect(java.util.stream.Collectors.toList());
     }
+
     @Override
     public void updateImage(Integer adId, String imagePath) {
         AdEntity ad = adRepository.findById(adId).orElseThrow(() -> new RuntimeException("Ad not found"));

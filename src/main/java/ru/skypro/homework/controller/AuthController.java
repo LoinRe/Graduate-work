@@ -17,6 +17,12 @@ public class AuthController {
 
     private final AuthService authService;
 
+    /**
+     * Выполняет аутентификацию пользователя.
+     *
+     * @param login DTO с именем пользователя и паролем
+     * @throws ResponseStatusException 401 UNAUTHORIZED при неуспешном входе
+     */
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)          // <─ 200 при успехе
     public void login(@RequestBody Login login) {
@@ -25,6 +31,12 @@ public class AuthController {
         }
     }
 
+    /**
+     * Регистрирует нового пользователя.
+     *
+     * @param register DTO с данными нового пользователя
+     * @throws ResponseStatusException 400 BAD_REQUEST если регистрация не удалась
+     */
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)     // <─ 201 при успехе
     public void register(@RequestBody Register register) {
