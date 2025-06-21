@@ -22,7 +22,7 @@ public class UserMapper {
 
     public UserEntity toEntity(Register register) {
         UserEntity entity = new UserEntity();
-        entity.setEmail(register.getEmail());
+        entity.setEmail(register.getUsername());
         entity.setUsername(register.getUsername());
         entity.setPassword(register.getPassword()); // хэш будет позже
         entity.setFirstName(register.getFirstName());

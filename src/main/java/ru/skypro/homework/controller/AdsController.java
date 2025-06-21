@@ -14,7 +14,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.service.AdService;
 
-import java.util.Collections;
 
 @Tag(name = "Объявления")
 @RestController

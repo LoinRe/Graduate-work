@@ -14,7 +14,7 @@ Backend-приложение на Spring Boot, реализующее REST-API �
 * Java 11, Maven
 * Spring Boot 2.7: Web, Security, Data JPA
 * PostgreSQL 14 + Liquibase
-* Lombok, MapStruct
+* Lombok
 * springdoc-openapi-ui 1.7
 
 ## Требования к окружению
